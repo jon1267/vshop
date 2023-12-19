@@ -28,6 +28,7 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
+        //dd($request->file('product_images'));
         $product = new Product();
         $product->title = $request->title;
         $product->price = $request->price;
