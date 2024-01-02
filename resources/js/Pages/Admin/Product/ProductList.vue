@@ -93,7 +93,7 @@ const resetFormData = () => {
   quantity.value = '';
   description.value = '';
   productImages.value = [];
-  //dialogImageUrl.value = '';
+  dialogImageUrl.value = '';
 };
 
 const openEditModal = (product) => {
@@ -101,7 +101,16 @@ const openEditModal = (product) => {
   isAddProduct.value  = false;
   dialogVisible.value = true;
 
-  console.log(product);
+  //console.log(product);
+  //update data in modal (time 5:48)
+  id.value = product.id;
+  title.value = product.title;
+  price.value = product.price;
+  quantity.value = product.quantity;
+  description.value = product.description;
+  brand_id.value = product.brand_id;
+  category_id.value = product.category_id;
+  product_images.value = product.product_images;
 };
 
 
@@ -173,6 +182,10 @@ const openEditModal = (product) => {
           </div>
         </div>
         <!-- multiple image upload end -->
+
+        <!-- list of images for selected product | TIME 11:20 (lesson 7) here -->
+
+        <!-- list of images for selected product end -->
 
         <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
       </form>
@@ -289,34 +302,45 @@ const openEditModal = (product) => {
 
             <tr v-for="product in products" :key="product.id" class="border-b dark:border-gray-700">
               <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{ product.title }}</th>
-              <td class="px-4 py-3">{{ product.category_id }}</td>
-              <td class="px-4 py-3">{{ product.brand_id }}</td>
+              <td class="px-4 py-3">{{ product.category.name }}</td>
+              <td class="px-4 py-3">{{ product.brand.name }}</td>
               <td class="px-4 py-3">{{ product.quantity }}</td>
               <td class="px-4 py-3">${{ product.price }}</td>
-              <td class="px-4 py-3">{{ product.inStock }}</td>
-              <td class="px-4 py-3">{{ product.published }}</td>
+              <td class="px-4 py-3">
+                <span v-if="product.inStock == 0" class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">In Stock</span>
+                <span v-else class="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">Out of Stock</span>
+              </td>
+              <td class="px-4 py-3">
+                <button v-if="product.published == 0" type="button" class="px-3 py-2 text-xs font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">Published</button>
+                <button v-else type="button" class="px-3 py-2 text-xs font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">Un Publish</button>
+              </td>
               <td class="px-4 py-3 flex items-center justify-end">
-                <button id="apple-imac-27-dropdown-button" data-dropdown-toggle="apple-imac-27-dropdown" class="inline-flex items-center p-0.5 text-sm font-medium text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none dark:text-gray-400 dark:hover:text-gray-100" type="button">
+
+                <button :id="`${product.id}-button`" :data-dropdown-toggle="`${product.id}`" class="inline-flex items-center p-0.5 text-sm font-medium text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none dark:text-gray-400 dark:hover:text-gray-100" type="button">
                   <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                     <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
                   </svg>
                 </button>
-                <div id="apple-imac-27-dropdown" class="hidden z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600">
-                  <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="apple-imac-27-dropdown-button">
+
+                <!-- below need only 1 line (not two. default 1 but not show menu ... line 2 show menu ... for me) -->
+                <!--<div :id="`${product.id}`" class="hidden z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600">-->
+                <div :id="`${product.id}`" class="hidden z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600" data-popper-placement="top">
+
+                  <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" :aria-labelledby="`${product.id}-button`">
                     <li>
                       <a href="#" class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Show</a>
                     </li>
                     <li>
-                      <button @click="openEditModal(product)" href="#"
-                              class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                      <a href="#" @click="openEditModal(product)" class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
                         Edit
-                      </button>
+                      </a>
                     </li>
                   </ul>
                   <div class="py-1">
                     <a href="#" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Delete</a>
                   </div>
                 </div>
+
               </td>
             </tr>
 
