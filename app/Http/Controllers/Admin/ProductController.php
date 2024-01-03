@@ -15,7 +15,7 @@ class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::with('category', 'brand')->get();
+        $products = Product::with('category', 'brand', 'product_images')->get();
         $brands = Brand::get();
         $categories = Category::get();
 
@@ -54,5 +54,14 @@ class ProductController extends Controller
             }
         }
         return redirect()->route('admin.products.index')->with('success', 'Product created successfully');
+    }
+
+    public function deleteImage(int|string $id)
+    {
+        $image = ProductImage::where('id', $id)->first();
+
+        return !is_null($image) ?
+            redirect()->route('admin.products.index')->with('success', 'Image deleted successfully') :
+            redirect()->route('admin.products.index')->with('error', 'Image for product not found');
     }
 }

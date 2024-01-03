@@ -113,7 +113,30 @@ const openEditModal = (product) => {
   product_images.value = product.product_images;
 };
 
+// delete product image
+const deleteImage = async (pimage, index) => {
+  try {
+    await router.delete('/admin/products/image/'+ pimage.id, {
+      onSuccess: (page) => {
+        product_images.value.splice(index, 1);
+        Swal.fire({
+          toast: true,
+          icon: 'success',
+          position: 'top-end',
+          showConfirmButton: false,
+          title: page.props.flash.success
+        });
+      }
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
 
+// update product [LESSON 7, time 22:30]
+const updateProduct = async () => {
+
+};
 </script>
 
 <template>
@@ -183,8 +206,17 @@ const openEditModal = (product) => {
         </div>
         <!-- multiple image upload end -->
 
-        <!-- list of images for selected product | TIME 11:20 (lesson 7) here -->
-
+        <!-- list of images for selected product | (lesson 7 TIME 11:20) here -->
+        <div class="flex flex-nowrap mb-4">
+          <div v-for="(pimage, index) in product_images" :key="pimage.id" class="relative w-32 h-32">
+            <img class="w-24 h-24 rounded" :src="`/${pimage.image}`" alt="">
+            <span class="absolute top-0 left-8 transform -translate-y-1/2 w-3.5 h-3.5 bg-red-400 border-2 border-white dark:border-gray-800 rounded-full">
+              <span @click="deleteImage(pimage, index)" class="text-white text-xs font-bold absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 cursor-pointer">
+                x
+              </span>
+            </span>
+          </div>
+        </div>
         <!-- list of images for selected product end -->
 
         <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
