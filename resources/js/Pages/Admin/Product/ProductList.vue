@@ -135,6 +135,36 @@ const deleteImage = async (pimage, index) => {
 
 // update product [LESSON 7, time 22:30]
 const updateProduct = async () => {
+  const formData = new FormData();
+  formData.append('title', title.value);
+  formData.append('price', price.value);
+  formData.append('quantity', quantity.value);
+  formData.append('description', description.value);
+  formData.append('brand_id', brand_id.value);
+  formData.append('category_id', category_id.value);
+  formData.append('_method', 'PUT');
+  //Append product images to the form data
+  for (const image of productImages.value) {
+    formData.append('product_images[]', image.raw);
+  }
+
+  try {
+      await router.post('/admin/products/update/'+ id.value, formData, {
+      onSuccess: (page) => {
+        dialogVisible.value = false;
+        resetFormData();
+        Swal.fire({
+          toast: true,
+          icon: 'success',
+          position: 'top-end',
+          showConfirmButton: false,
+          title: page.props.flash.success
+        });
+      }
+    });
+  } catch (err) {
+    console.log(err);
+  }
 
 };
 </script>
@@ -151,7 +181,7 @@ const updateProduct = async () => {
     >
 
       <!-- form start -->
-      <form  @submit.prevent="AddProduct()" class="max-w-md mx-auto">
+      <form  @submit.prevent="editMode ? updateProduct() : AddProduct()" class="max-w-md mx-auto">
         <div class="relative z-0 w-full mb-4 group">
           <input v-model="title" type="text" name="floating_title" id="floating_title" class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
           <label for="floating_title" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Product title</label>
