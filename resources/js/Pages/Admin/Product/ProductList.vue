@@ -1,8 +1,13 @@
 <script setup>
 import { usePage, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
+import { Plus } from '@element-plus/icons-vue';
+import Swal from "sweetalert2";
 
-const products = usePage().props.products;
+//const products = usePage().props.products;
+defineProps({
+  products: Array
+});
 const brands = usePage().props.brands;
 const categories = usePage().props.categories;
 //console.log(products, brands, categories);
@@ -72,7 +77,8 @@ const AddProduct = async () => {
           icon: 'success',
           position: 'top-end',
           showConfirmButton: false,
-          title: page.props.flash.success
+          title: page.props.flash.success,
+          timer: 2000
         });
         dialogVisible.value = false;
         resetFormData();
@@ -124,7 +130,8 @@ const deleteImage = async (pimage, index) => {
           icon: 'success',
           position: 'top-end',
           showConfirmButton: false,
-          title: page.props.flash.success
+          title: page.props.flash.success,
+          timer: 2000
         });
       }
     });
@@ -158,13 +165,52 @@ const updateProduct = async () => {
           icon: 'success',
           position: 'top-end',
           showConfirmButton: false,
-          title: page.props.flash.success
+          title: page.props.flash.success,
+          timer: 2000
         });
       }
     });
   } catch (err) {
     console.log(err);
   }
+
+};
+
+//delete product (LESSON 8 time 4:00)
+const deleteProduct = (product, index) => {
+  Swal.fire({
+    title: 'Are you sure?',
+    text: "You won't be able to revert this!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    cancelButtonText: 'No',
+    confirmButtonText: 'Yes, delete it!'
+  }).then((result) => {
+
+    if (result.isConfirmed) {
+      try {
+        router.delete('/admin/products/destroy/'+ product.id, {
+          onSuccess: (page) => {
+            //this.delete(product, index); // this throw error & nothing more ...
+            Swal.fire({
+              toast: true,
+              icon: 'success',
+              position: 'top-end',
+              showConfirmButton: false,
+              title: page.props.flash.success,
+              timer: 2000
+            });
+          }
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
+  })
+
 
 };
 </script>
@@ -362,7 +408,7 @@ const updateProduct = async () => {
             </thead>
             <tbody>
 
-            <tr v-for="product in products" :key="product.id" class="border-b dark:border-gray-700">
+            <tr v-for="(product, index) in products" :key="product.id" class="border-b dark:border-gray-700">
               <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{ product.title }}</th>
               <td class="px-4 py-3">{{ product.category.name }}</td>
               <td class="px-4 py-3">{{ product.brand.name }}</td>
@@ -389,9 +435,9 @@ const updateProduct = async () => {
                 <div :id="`${product.id}`" class="hidden z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600" data-popper-placement="top">
 
                   <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" :aria-labelledby="`${product.id}-button`">
-                    <li>
+                    <!--<li>
                       <a href="#" class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Show</a>
-                    </li>
+                    </li>-->
                     <li>
                       <a href="#" @click="openEditModal(product)" class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
                         Edit
@@ -399,7 +445,7 @@ const updateProduct = async () => {
                     </li>
                   </ul>
                   <div class="py-1">
-                    <a href="#" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Delete</a>
+                    <a href="#" @click="deleteProduct(product, index)" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Delete</a>
                   </div>
                 </div>
 

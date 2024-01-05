@@ -97,4 +97,11 @@ class ProductController extends Controller
 
         return redirect()->route('admin.products.index')->with('error', 'Image not found');
     }
+
+    public function deleteProduct(int|string $id)
+    {
+        $product = Product::findOrFail($id)->delete();
+
+        redirect()->route('admin.products.index')->with('success', 'Product deleted successfully');
+    }
 }
