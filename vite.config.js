@@ -17,4 +17,8 @@ export default defineConfig({
             },
         }),
     ],
+    // this prevent warning: (!) Some chunks are larger than 500 kBs after minification.
+    build: {
+        chunkSizeWarningLimit: 1600,
+    }
 });
