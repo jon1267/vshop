@@ -8,6 +8,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\User\CartController;
 
 //user routes
 /*Route::get('/', function () {
@@ -31,8 +32,16 @@ Route::middleware('auth')->group(function () {
 });
 //end user routes
 
-//admin routes
+// add to cart
+Route::prefix('cart')->controller(CartController::class)->group(function () {
+    Route::get('view', 'view')->name('cart.view');
+    Route::post('store/{product}', 'store')->name('cart.store');
+    Route::patch('update/{product}', 'update')->name('cart.update');
+    Route::delete('delete/{product}', 'delete')->name('cart.delete');
+});
+// end add to cart
 
+//admin routes
 Route::group([['prefix' => 'admin', 'middleware' => 'RedirectAdmin']], function () {
     Route::get('login',[AdminAuthController::class, 'showLoginForm'])->name('admin.login');
     Route::post('login',[AdminAuthController::class, 'login'])->name('admin.login.post');

@@ -4,7 +4,7 @@ import { Link, usePage } from '@inertiajs/vue3';
 const canLogin = usePage().props.canLogin;
 const canRegister = usePage().props.canRegister;
 const auth = usePage().props.auth;
-console.log(canLogin, canRegister, auth);
+//console.log(canLogin, canRegister, auth);
 </script>
 
 <template>
