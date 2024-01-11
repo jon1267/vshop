@@ -41,6 +41,9 @@ class HandleInertiaRequests extends Middleware
                 'location' => $request->url(),
             ],
 
+            // lesson 11 TIME 44:25
+            'cart' => new CartResource(),
+
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),
                 'error' => fn () => $request->session()->get('error'),
