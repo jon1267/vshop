@@ -3,20 +3,27 @@
 namespace App\Helper;
 
 use App\Models\CartItem;
+use App\Models\Product;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cookie;
 
 class Cart {
     public static function getCount()
     {
         if ($user = auth()->user()) {
-            return CartItem::whereUserId($user->id)->sum('quantity');
+            return CartItem::whereUserId($user->id)->count(); //sum('quantity')
+        } else {
+            return array_reduce(self::getCookieCartItems(), fn($carry) => $carry + 1, 0);
         }
     }
 
     public static function getCartItems()
     {
         if ($user = auth()->user()) {
-            return CartItem::whereUserId($user->id)->get()->map(fn(CartItem $item) => ['product_id' => $item->product_id, 'quantity' => $item->quantity]);
+            return CartItem::whereUserId($user->id)->get()->map(fn (CartItem $item) => ['product_id' => $item->product_id, 'quantity' => $item->quantity]);
+        } else {
+            return self::getCookieCartItems();
         }
     }
 
@@ -80,5 +87,16 @@ class Cart {
             CartItem::insert($newCartItems);
         }
 
+    }
+
+    public static function getProductsAndCartItems(): array
+    {
+        $cartItems = self::getCartItems(); //dd($cartItems);
+
+        $ids = Arr::pluck($cartItems, 'product_id');
+        $products = Product::whereIn('id', $ids)->with('product_images')->get();
+        $cartItems = Arr::keyBy($cartItems, 'product_id');
+
+        return [$products, $cartItems];
     }
 }

@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Tightenco\Ziggy\Ziggy;
 use Illuminate\Foundation\Application;
+use App\Helper\Cart;
+use App\Http\Resources\CartResource;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -42,7 +44,7 @@ class HandleInertiaRequests extends Middleware
             ],
 
             // lesson 11 TIME 44:25
-            'cart' => new CartResource(),
+            'cart' => new CartResource(Cart::getProductsAndCartItems()),
 
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),
