@@ -34,7 +34,6 @@ class Cart {
 
     public static function setCookieCartItems(array $cartItems)
     {
-        //Cookie::queue('cart_items', fn(int $carry, array $item) => $carry + $item['quantity'], 0);
         Cookie::queue('cart_items', json_encode($cartItems), 60*24*30);
     }
 
