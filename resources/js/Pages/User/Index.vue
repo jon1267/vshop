@@ -1,6 +1,7 @@
 <script setup>
 import { Link, router } from '@inertiajs/vue3';
 import Swal from "sweetalert2";
+import Hero from './Layouts/Hero.vue';
 import UserLayouts from './Layouts/UserLayouts.vue';
 
 defineProps({
@@ -33,6 +34,10 @@ const addToCart = (product) => {
 <template>
 
   <UserLayouts>
+    <!-- hero section (in main) -->
+    <Hero />
+    <!-- end hero section (in main) -->
+
     <div class="bg-white">
       <div class="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
         <h2 class="text-2xl font-bold tracking-tight text-gray-900">Latest products list</h2>
