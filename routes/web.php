@@ -19,7 +19,7 @@ use App\Http\Controllers\User\CartController;
         'phpVersion' => PHP_VERSION,
     ]);
 }); */
-Route::get('/', [UserController::class, 'index'])->name('user.home');
+Route::get('/', [UserController::class, 'index'])->name('home');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');

@@ -14,6 +14,11 @@ const update = (product, quantity) => {
     quantity,
   });
 };
+
+// remove product from cart
+const remove = (product) => {
+  router.delete(route('cart.delete', product));
+};
 </script>
 
 <template>
@@ -55,10 +60,9 @@ const update = (product, quantity) => {
               </td>
               <td class="px-6 py-4">
                 <div class="flex items-center">
-                  <!-- Lesson 13 TIME 31:45 -->
                   <button @click.prevent="update(product, carts[itemId(product.id)].quantity - 1)"
                     :disabled="carts[itemId(product.id)].quantity <= 1"
-                    class="inline-flex items-center justify-center p-1 me-3 text-sm font-medium h-6 w-6 text-gray-500 bg-white border border-gray-300 rounded-full focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 disabled" type="button">
+                    :class="[carts[itemId(product.id)].quantity > 1 ? 'cursor-pointer text-purple-600' : 'cursor-not-allowed text-gray-300 dark:text-gray-500', 'inline-flex items-center justify-center p-1 me-3 text-sm font-medium h-6 w-6 text-gray-500 bg-white border border-gray-300 rounded-full focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 disabled']" type="button">
                     <span class="sr-only">Quantity button</span>
                     <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
                       <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16"/>
@@ -80,7 +84,7 @@ const update = (product, quantity) => {
                 {{ product.price }}
               </td>
               <td class="px-6 py-4 ">
-                <a href="#" class="font-medium text-red-600 dark:text-red-500 hover:underline ">
+                <a @click="remove(product)" class="font-medium text-red-600 dark:text-red-500 hover:underline cursor-pointer ">
 
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
@@ -97,7 +101,7 @@ const update = (product, quantity) => {
         </div>
         <div class="lg:w-1/3 md:w-1/2 bg-white flex flex-col md:ml-auto w-full md:py-8 mt-8 md:mt-0">
           <h2 class="text-gray-900 text-lg mb-1 font-medium title-font">Summary</h2>
-          <p class="leading-relaxed mb-5 text-gray-600">Total: $ 1250</p>
+          <p class="leading-relaxed mb-5 text-gray-600">Total: $ {{ total }}</p>
 
           <h2 class="text-gray-900 text-lg mb-1 font-medium title-font">Shipping Address</h2>
           <p class="leading-relaxed mb-5 text-gray-600">1234 Address Example, NY, 567 890</p>
