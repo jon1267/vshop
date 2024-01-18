@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\User\CartController;
+use App\Http\Controllers\User\ProductListController;
 
 //user routes
 /*Route::get('/', function () {
@@ -40,6 +41,11 @@ Route::prefix('cart')->controller(CartController::class)->group(function () {
     Route::delete('delete/{product}', 'delete')->name('cart.delete');
 });
 // end add to cart
+
+//routes for product list & filters
+Route::prefix('products')->controller(ProductListController::class)->group(function () {
+    Route::get('/', 'index')->name('products.index');
+});
 
 //admin routes
 Route::group([['prefix' => 'admin', 'middleware' => 'RedirectAdmin']], function () {
