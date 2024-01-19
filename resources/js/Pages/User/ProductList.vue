@@ -209,7 +209,7 @@ const props = defineProps({
               <!-- Product grid -->
               <div class="lg:col-span-3">
                 <!-- Your content -->
-                <Products :products="products"></Products>
+                <Products :products="products.data"></Products>
 
 
               </div>

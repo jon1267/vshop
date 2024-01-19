@@ -9,10 +9,8 @@ const props = defineProps({
   products: Array,
 })
 
-const viewDetails = () => {
-  console.log('details');
-}
-
+// Lesson 14 TIME 21:45
+// move cart functional to products module
 const addToCart = (product) => {
   console.log(product);
   router.post(route('cart.store', product), {
