@@ -60,9 +60,9 @@ class Product extends Model
                 $q->whereIn('category_id', request('categories'));
             })
             ->when(request('prices'), function (Builder $q) {
-                $q->whereBetween('prices', [
+                $q->whereBetween('price', [
                     request('prices.from',0),
-                    request('price.to', 100000)
+                    request('prices.to', 100000)
                 ]);
             });
     }

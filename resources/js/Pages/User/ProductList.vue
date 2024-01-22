@@ -17,6 +17,8 @@ import {
 import { XMarkIcon } from '@heroicons/vue/24/outline'
 import { ChevronDownIcon, FunnelIcon, MinusIcon, PlusIcon, Squares2X2Icon } from '@heroicons/vue/20/solid'
 import Products from './Components/Products.vue'
+import SecondaryButton from '@/Components/SecondaryButton.vue'
+import { useForm } from '@inertiajs/vue3'
 
 const sortOptions = [
   { name: 'Most Popular', href: '#', current: true },
@@ -32,6 +34,8 @@ const subCategories = [
   { name: 'Hip Bags', href: '#' },
   { name: 'Laptop Sleeves', href: '#' },
 ]
+
+// lesson 14 TIME 31:40
 const filters = [
   {
     id: 'color',
@@ -70,6 +74,23 @@ const filters = [
   },
 ]
 
+const filterPrices = useForm({
+  prices: [0, 100000],
+})
+
+const priceFilters = (data) => {
+  filterPrices.transform((data) => ({
+    ...data,
+    prices: {
+      from: filterPrices.prices[0],
+      to: filterPrices.prices[1],
+    }
+  })).get('products', {
+    preserveState: true,
+    replace: true
+  })
+}
+
 const mobileFiltersOpen = ref(false)
 
 const props = defineProps({
@@ -81,7 +102,6 @@ const props = defineProps({
 <template>
   <UserLayouts>
 
-    <!-- Lesson 14 TIME 5:30 -->
     <div class="bg-white">
       <div>
         <!-- Mobile filter dialog -->
@@ -178,12 +198,36 @@ const props = defineProps({
             <div class="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-4">
               <!-- Filters -->
               <form class="hidden lg:block">
-                <h3 class="sr-only">Categories</h3>
-                <ul role="list" class="space-y-4 border-b border-gray-200 pb-6 text-sm font-medium text-gray-900">
-                  <li v-for="category in subCategories" :key="category.name">
-                    <a :href="category.href">{{ category.name }}</a>
-                  </li>
-                </ul>
+                <h3 class="sr-only">Prices</h3>
+                <!-- price filter -->
+                <div class="flex items-center justify-between space-x-3">
+                  <div class="basis-1/3">
+                    <label for="filters-price-form" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+                      From
+                    </label>
+                    <input type="number" id="filters-price-form"  placeholder="Min price" v-model="filterPrices.prices[0]"
+                           class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
+                    >
+                  </div>
+
+                  <div class="basis-1/3">
+                    <label for="filters-price-to" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+                      To
+                    </label>
+
+                    <input type="number" id="filters-price-to"  placeholder="Max price" v-model="filterPrices.prices[1]"
+                           class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
+                    >
+                  </div>
+
+                  <SecondaryButton class="self-end "  @click="priceFilters()">
+                    Ok
+                  </SecondaryButton>
+
+
+                </div>
+                <!-- end price filter -->
+
 
                 <Disclosure as="div" v-for="section in filters" :key="section.id" class="border-b border-gray-200 py-6" v-slot="{ open }">
                   <h3 class="-my-3 flow-root">

@@ -1,7 +1,29 @@
 <script setup>
+import { router, Link } from "@inertiajs/vue3";
+import Swal from "sweetalert2";
+
 defineProps({
   products: Array
 })
+
+// move cart functional to products module
+const addToCart = (product) => {
+  console.log(product);
+  router.post(route('cart.store', product), {
+    onSuccess: (page) => {
+      if (page.props.flash.success) {
+        Swal.fire({
+          toast: true,
+          icon: 'success',
+          position: 'top-end',
+          showConfirmButton: false,
+          title: page.props.flash.success,
+          timer: 2000
+        });
+      }
+    }
+  })
+}
 </script>
 
 <template>

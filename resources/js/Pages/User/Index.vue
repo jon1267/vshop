@@ -9,25 +9,7 @@ const props = defineProps({
   products: Array,
 })
 
-// Lesson 14 TIME 21:45
 // move cart functional to products module
-const addToCart = (product) => {
-  console.log(product);
-  router.post(route('cart.store', product), {
-    onSuccess: (page) => {
-      if (page.props.flash.success) {
-        Swal.fire({
-          toast: true,
-          icon: 'success',
-          position: 'top-end',
-          showConfirmButton: false,
-          title: page.props.flash.success,
-          timer: 2000
-        });
-      }
-    }
-  })
-}
 </script>
 
 <template>
@@ -45,7 +27,7 @@ const addToCart = (product) => {
         <Products :products="products"></Products>
 
         <div class="flex justify-center mt-5">
-          <Link :href="route('products.index')" class="text-gray-900 bg-gradient-to-r from-teal-200 to-lime-200 hover:bg-gradient-to-l hover:from-teal-200 hover:to-lime-200 focus:ring-4 focus:outline-none focus:ring-lime-200 dark:focus:ring-teal-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Teal to Lime</Link>
+          <Link :href="route('products.index')" class="text-gray-900 bg-gradient-to-r from-teal-200 to-lime-200 hover:bg-gradient-to-l hover:from-teal-200 hover:to-lime-200 focus:ring-4 focus:outline-none focus:ring-lime-200 dark:focus:ring-teal-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">View all products</Link>
         </div>
 
       </div>
