@@ -1,9 +1,8 @@
 <script setup>
-import { computed } from 'vue';
+import { computed, reactive } from "vue";
 import { router, usePage, Link } from "@inertiajs/vue3";
 import UserLayouts from './Layouts/UserLayouts.vue';
 
-// Lesson 15 TIME 2:36
 defineProps({
   userAddress: Object
 })
@@ -13,6 +12,19 @@ const products = computed(() => usePage().props.cart.data.products);
 const total = computed(() => usePage().props.cart.data.total);
 
 const itemId = (id) => carts.value.findIndex((item) => item.product_id === id);
+
+const form = reactive({
+  address1: null,
+  state: null,
+  city: null,
+  zipcode: null,
+  country_code: null,
+  type: null,
+})
+
+const formFilled = computed(() => {
+  // Lesson 15 TIME 21:50
+})
 
 const update = (product, quantity) => {
   router.patch(route('cart.update', product), {
@@ -24,6 +36,18 @@ const update = (product, quantity) => {
 const remove = (product) => {
   router.delete(route('cart.delete', product));
 };
+
+function submit() {
+  router.visit(route('checkout.store'), {
+    method: 'post',
+    data: {
+      carts:  usePage().props.cart.data.items,
+      products: usePage().props.cart.data.products,
+      total: usePage().props.cart.data.total,
+      address: form
+    },
+  })
+}
 </script>
 
 <template>
@@ -108,35 +132,45 @@ const remove = (product) => {
           <h2 class="text-gray-900 text-lg mb-1 font-medium title-font">Summary</h2>
           <p class="leading-relaxed mb-5 text-gray-600">Total: $ {{ total }}</p>
 
-          <h2 class="text-gray-900 text-lg mb-1 font-medium title-font">Shipping Address</h2>
-          <p class="leading-relaxed mb-5 text-gray-600">1234 Address Example, NY, 567 890</p>
-          <p class="leading-relaxed mb-5 text-gray-600">or you can add new below</p>
+          <div v-if="userAddress" >
+            <h2 class="text-gray-900 text-lg mb-1 font-medium title-font">Shipping Address</h2>
+            <p class="leading-relaxed mb-5 text-gray-600">{{ userAddress.address1 }}, {{ userAddress.city }}, {{ userAddress.zipcode }}</p>
+            <p class="leading-relaxed mb-5 text-gray-600">or you can add new below</p>
+          </div>
+          <div v-else>
+            <p class="leading-relaxed mb-5 text-gray-600">Add Shipping Address to continue</p>
+          </div>
 
-          <div class="relative mb-4">
-            <label for="name" class="leading-7 text-sm text-gray-600">Address 1</label>
-            <input type="text" id="name" name="name" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
-          </div>
-          <div class="relative mb-4">
-            <label for="email" class="leading-7 text-sm text-gray-600">Sity</label>
-            <input type="email" id="email" name="email" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
-          </div>
-          <div class="relative mb-4">
-            <label for="message" class="leading-7 text-sm text-gray-600">State</label>
-            <input type="text" id="message" name="message" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
-          </div>
-          <div class="relative mb-4">
-            <label for="zipcode" class="leading-7 text-sm text-gray-600">Zipcode</label>
-            <input type="text" id="zipcode" name="zipcode" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
-          </div>
-          <div class="relative mb-4">
-            <label for="country_code" class="leading-7 text-sm text-gray-600">Country Code</label>
-            <input type="text" id="country_code" name="country_code" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
-          </div>
-          <div class="relative mb-4">
-            <label for="address_type" class="leading-7 text-sm text-gray-600">Address Type</label>
-            <input type="text" id="address_type" name="address_type" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-6 transition-colors duration-200 ease-in-out">
-          </div>
-          <button class="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">Checkout</button>
+          <form @submit.prevent="submit">
+            <div class="relative mb-4">
+              <label for="address1" class="leading-7 text-sm text-gray-600">Address 1</label>
+              <input type="text" id="address1" name="address1" v-model="form.address1" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+            </div>
+            <div class="relative mb-4">
+              <label for="city" class="leading-7 text-sm text-gray-600">City</label>
+              <input type="city" id="city" name="sity" v-model="form.city" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+            </div>
+            <div class="relative mb-4">
+              <label for="state" class="leading-7 text-sm text-gray-600">State</label>
+              <input type="text" id="state" name="state" v-model="form.state" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+            </div>
+            <div class="relative mb-4">
+              <label for="zipcode" class="leading-7 text-sm text-gray-600">Zipcode</label>
+              <input type="text" id="zipcode" name="zipcode" v-model="form.zipcode" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+            </div>
+            <div class="relative mb-4">
+              <label for="country_code" class="leading-7 text-sm text-gray-600">Country Code</label>
+              <input type="text" id="country_code" name="country_code" v-model="form.country_code" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+            </div>
+            <div class="relative mb-4">
+              <label for="address_type" class="leading-7 text-sm text-gray-600">Address Type</label>
+              <input type="text" id="address_type" name="address_type" v-model="form.type" class="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-6 transition-colors duration-200 ease-in-out">
+            </div>
+            <button v-if="userAddress" type="submit" class="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">Checkout</button>
+            <button v-else type="submit" class="text-white bg-gray-500 border-0 py-2 px-6 focus:outline-none hover:bg-gray-600 rounded text-lg">Add Address to continue</button>
+
+          </form>
+
           <Link :href="route('products.index')" class="text-sm text-gray-500 mt-3 hover:text-gray-600 hover:font-bold">Continue shopping.</Link>
 
         </div>
