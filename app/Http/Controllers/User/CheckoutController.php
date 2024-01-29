@@ -12,6 +12,7 @@ use App\Models\UserAddress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CheckoutController extends Controller
 {
@@ -42,8 +43,8 @@ class CheckoutController extends Controller
                     'currency' => 'usd',
                     'product_data' => ['name' => $item['title']],
                     'unit_amount'  => (int) ($item['price'] * 100),
-                    'quantity' => $item['quantity']
                 ],
+                'quantity' => $item['quantity']
             ];
         }
 
@@ -114,13 +115,32 @@ class CheckoutController extends Controller
             ];
             Payment::create($paymentData);
         }
-        // Lesson 15, TIME 44:25 (add to payments: table, model)
-        return Inertia::location($checkout_session->url);
+        return Inertia::location($checkout_session->url); // return redirect('checkout.success'); get error
     }
 
     public function success(Request $request)
     {
+        \Stripe\Stripe::setApiKey(env('STRIPE_KEY'));
+        $sessionId = $request->get('session_id');
 
+        try {
+            $session = \Stripe\Checkout\Session::retrieve($sessionId);
+            if (!$session) {
+                throw new NotFoundHttpException();
+            }
+            $order = Order::where('session_id', $session->id)->first();
+            if (!$order) {
+                throw new NotFoundHttpException();
+            }
+            if ($order->status === 'unpaid') {
+                $order->status = 'paid';
+                $order->save();
+            }
+
+            return redirect()->route('dashboard');
+        } catch (\Exception $e) {
+            throw new NotFoundHttpException();
+        }
     }
 
     public function cancel()
