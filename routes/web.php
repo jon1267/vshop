@@ -11,6 +11,7 @@ use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\User\CartController;
 use App\Http\Controllers\User\ProductListController;
 use App\Http\Controllers\User\CheckoutController;
+use App\Http\Controllers\User\DashboardController;
 
 //user routes
 /*Route::get('/', function () {
@@ -23,9 +24,8 @@ use App\Http\Controllers\User\CheckoutController;
 }); */
 Route::get('/', [UserController::class, 'index'])->name('home');
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'] )
+    ->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
